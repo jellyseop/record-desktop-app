@@ -6,16 +6,25 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "lowdb": "^6.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
+  "main": "public/main.js",
+  "build": {
+    "extraMetadata": {
+      "main": "build/main.js"
+    },
+    "files": [
+      "build/**/*"
+    ]
+  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "concurrently -k \"BROWSER=none react-scripts start\" \"build-electron -d\" \"wait-on public/.build-electron-done http://localhost:3000 && electron .\"",
+    "build": "build-electron && react-scripts build",
+    "postinstall": "electron-builder install-app-deps"
   },
   "eslintConfig": {
     "extends": [
@@ -34,5 +43,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "build-electron": "^1.0.5",
+    "concurrently": "^8.2.0",
+    "electron": "^25.2.0",
+    "electron-builder": "^24.4.0",
+    "wait-on": "^7.0.1"
   }
 }
