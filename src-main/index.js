@@ -1,7 +1,8 @@
 const { app, BrowserWindow } = require("electron");
 const url = require("url");
 const path = require("path");
-const { initConnection } = require("../backend/db");
+const { initApp } = require("../backend/service");
+require("../backend/db");
 //const fs = require("fs");
 //const { ipcMain } = require("electron/main");
 
@@ -38,7 +39,7 @@ function createWindow() {
   win.loadURL(startUrl);
 
   win.webContents.on("did-finish-load", () => {
-    const data = initConnection();
+    const data = initApp();
     win.webContents.send("ping", data);
   });
 }
