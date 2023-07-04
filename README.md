@@ -1,19 +1,20 @@
 # todo
 
-**_ backend _**
+#### backend
+
 [o] 저장 -> by month and date
 [o] --preload: initApp()
 [o] dynamic calling
 [] default main processes
 [] ipcMain.on()
-`
 
 - [] record:create
 - [] record:read
 - [] record:update
 - [] record:delete
 
-**_ frontend _**
+#### frontend
+
 [] 이식
 [] loading component
 [] form:phone -> format && default
