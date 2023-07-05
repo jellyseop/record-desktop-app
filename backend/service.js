@@ -12,33 +12,35 @@ const formatDate = (dateObj) => {
 };
 
 export const initApp = () => {
-  const now = dayjs();
-  const { year, month, date } = formatDate(now);
+  try {
+    const now = dayjs();
+    const { year, month, date } = formatDate(now);
 
-  db.read();
-  const { records } = db.data;
+    db.read();
+    const { records } = db.data;
 
-  if (records[year] === undefined) {
-    records[year] = {};
-    db.write();
-  }
-  if (records[year][month] === undefined) {
-    records[year][month] = {};
-    db.write();
-  }
-  if (records[year][month][date] === undefined) {
-    records[year][month][date] = [];
-    db.write();
-  }
+    if (records[year] === undefined) {
+      records[year] = {};
+      db.write();
+    }
+    if (records[year][month] === undefined) {
+      records[year][month] = {};
+      db.write();
+    }
+    if (records[year][month][date] === undefined) {
+      records[year][month][date] = [];
+      db.write();
+    }
 
-  const data = records[year][month][date];
-  return data;
+    const data = records[year][month][date];
+    return { ok: true, data };
+  } catch (error) {
+    return { ok: false };
+  }
 };
 
-const getByDate = (dateObj) => {
+export const getByDate = ({ year, month, date }) => {
   try {
-    const { year, month, date } = formatDate(dateObj);
-
     db.read();
     const { records } = db.data;
 
@@ -50,14 +52,13 @@ const getByDate = (dateObj) => {
     }
     return { ok: true, data };
   } catch (error) {
+    console.log("error :>> ", error);
     return { ok: false, error: "데이터를 가져올 수 없습니다." };
   }
 };
 
-const createRecord = (formInput) => {
+export const createRecord = ({ name, phone, code, memo }) => {
   try {
-    const { name, phone, code, memo } = formInput;
-
     const now = dayjs();
     const { year, month, date } = formatDate(now);
     const hour = now.format("HH").toString();
@@ -85,18 +86,22 @@ const createRecord = (formInput) => {
   }
 };
 
-const deleteRecord = (dateObj, id) => {
+export const deleteRecord = ({ year, month, date, selected }) => {
   try {
-    const { year, month, date } = formatDate(dateObj);
-
     db.read();
-    let { records } = db.data;
+    const { records } = db.data;
 
-    const deletedRecords = records[year][month][date].filter(
-      (record) => record.id !== id
-    );
-    console.log(deletedRecords);
-    records[year][month][date] = deletedRecords;
+    const data = records[year][month][date];
+
+    for (const idToDelete of selected) {
+      const index = data.findIndex((record) => record.id === idToDelete);
+
+      if (index !== -1) {
+        // Remove the element from the array
+        data.splice(index, 1);
+      }
+    }
+
     db.write();
 
     return { ok: true };
@@ -106,24 +111,24 @@ const deleteRecord = (dateObj, id) => {
   }
 };
 
-const toggleIsValidById = (dateObj, id) => {
+export const toggleIsValidById = ({ year, month, date, selected }) => {
   try {
-    const { year, month, date } = formatDate(dateObj);
-
     db.read();
     const { records } = db.data;
 
-    const record = records[year][month][date].find(
-      (record) => record.id === id
-    );
+    const data = records[year][month][date];
 
-    if (!record) {
-      return { ok: false, error: "해당 데이터를 찾을 수 없습니다." };
+    for (const idToUpdate of selected) {
+      const record = data.find((record) => record.id === idToUpdate);
+      if (record) {
+        record.isValid = !record.isValid;
+      }
     }
-    record.isValid = !record.isValid;
+
     db.write();
     return { ok: true };
   } catch (error) {
+    console.log("updateRecord error :>> ", error);
     return { ok: false, error: "코드 사용을 처리 할 수 없습니다." };
   }
 };

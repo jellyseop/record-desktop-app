@@ -1,10 +1,16 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const url = require("url");
 const path = require("path");
-const { initApp } = require("../backend/service");
+const {
+  initApp,
+  createRecord,
+  getByDate,
+  deleteRecord,
+  toggleIsValidById,
+} = require("../backend/service");
+
 require("../backend/db");
 //const fs = require("fs");
-//const { ipcMain } = require("electron/main");
 
 function createWindow() {
   /*
@@ -39,9 +45,43 @@ function createWindow() {
   win.loadURL(startUrl);
 
   win.webContents.on("did-finish-load", () => {
-    const data = initApp();
-    win.webContents.send("ping", data);
+    const result = initApp();
+    win.webContents.send("app:init", result);
+  });
+
+  ipcMain.handle("record:create", (_, data) => {
+    const result = createRecord(data);
+    return result;
+  });
+
+  ipcMain.handle("record:read", (_, data) => {
+    const result = getByDate(data);
+    return result;
+  });
+
+  ipcMain.handle("record:delete", (_, data) => {
+    const result = deleteRecord(data);
+    return result;
+  });
+
+  ipcMain.handle("record:update", (_, data) => {
+    const result = toggleIsValidById(data);
+    return result;
   });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow();
+
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});

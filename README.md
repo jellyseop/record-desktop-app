@@ -1,35 +1,12 @@
-# todo
+# TODO
 
-#### backend
+- [ ] **Loading component**
+- [ ] **tune Calender**
+  - [ ] click to copy.
+  - [ ] available date range
+- [ ] **tune Form**
+- [ ] default for phone.
+- [ ] description -> max length
+- [ ] **Responsive Design**
 
-[o] 저장 -> by month and date
-[o] --preload: initApp()
-[o] dynamic calling
-[] default main processes
-[] ipcMain.on()
-
-- [] record:create
-- [] record:read
-- [] record:update
-- [] record:delete
-
-#### frontend
-
-[] 이식
-[] loading component
-[] form:phone -> format && default
-[] click-cell -> copy
-
-[] ipcRenderer.on()
-
-- [] record:created
-- [] record:readed
-- [] record:updated
-- [] record:deleted
-
-[] ipcRenderer.send()
-
-- [] record:create
-- [] record:read
-- [] record:update
-- [] record:delete
+> Created by Jelly
